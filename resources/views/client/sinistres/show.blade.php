@@ -1,0 +1,186 @@
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Détails du sinistre') }} - {{ $sinistre->numero_sinistre }}
+            </h2>
+            <a href="{{ route('client.sinistres.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                {{ __('Retour à la liste') }}
+            </a>
+        </div>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Statut du sinistre -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Statut actuel</h3>
+                            <span class="px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full 
+                                @if($sinistre->status === 'en_attente') bg-yellow-100 text-yellow-800
+                                @elseif($sinistre->status === 'en_cours') bg-blue-100 text-blue-800
+                                @elseif($sinistre->status === 'expertise') bg-purple-100 text-purple-800
+                                @elseif($sinistre->status === 'validé') bg-green-100 text-green-800
+                                @elseif($sinistre->status === 'refusé') bg-red-100 text-red-800
+                                @endif">
+                                {{ ucfirst(str_replace('_', ' ', $sinistre->status)) }}
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Déclaré le {{ $sinistre->created_at->format('d/m/Y à H:i') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Informations du véhicule -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Informations du véhicule</h3>
+                        <dl class="grid grid-cols-1 gap-4">
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Immatriculation</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $sinistre->immatriculation }}</dd>
+                            </div>
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Marque</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $sinistre->marque }}</dd>
+                            </div>
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Modèle</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $sinistre->modele }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Informations du sinistre -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Informations du sinistre</h3>
+                        <dl class="grid grid-cols-1 gap-4">
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Date</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $sinistre->date_sinistre->format('d/m/Y') }}</dd>
+                            </div>
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Heure</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $sinistre->heure_sinistre }}</dd>
+                            </div>
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Type</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                    @php
+                                        $typesSinistres = [
+                                            'vol_tentative_vol' => 'Vol et tentative de vol',
+                                            'vandalisme_degradations' => 'Vandalisme et dégradations volontaires',
+                                            'incendie_explosion' => 'Incendie et explosion',
+                                            'bris_glaces' => 'Bris de glaces',
+                                            'collision_route' => 'Collission de la Route'
+                                        ];
+                                    @endphp
+                                    {{ $typesSinistres[$sinistre->type_sinistre] }}
+                                </dd>
+                            </div>
+                            <div class="sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Lieu</dt>
+                                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ $sinistre->lieu_sinistre }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description et circonstances -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Description et circonstances</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-2">Description des dommages</h4>
+                            <p class="text-sm text-gray-900 bg-gray-50 rounded-lg p-4">{{ $sinistre->description }}</p>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 mb-2">Circonstances</h4>
+                            <p class="text-sm text-gray-900 bg-gray-50 rounded-lg p-4">{{ $sinistre->circonstances }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Documents justificatifs</h3>
+                        <button type="button" onclick="document.getElementById('document-upload').click()" class="inline-flex items-center px-4 py-2 bg-[#00008f] text-white text-sm font-medium rounded-md hover:bg-[#000066]">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Ajouter des documents
+                        </button>
+                    </div>
+
+                    <form action="{{ route('client.sinistres.documents.upload', $sinistre) }}" method="POST" enctype="multipart/form-data" class="hidden">
+                        @csrf
+                        <input type="file" id="document-upload" name="documents[]" multiple onchange="this.form.submit()" class="hidden">
+                    </form>
+
+                    @if($sinistre->documents->isEmpty())
+                        <p class="text-sm text-gray-500">Aucun document n'a été téléchargé pour le moment.</p>
+                    @else
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            @foreach($sinistre->documents as $document)
+                                <div class="relative group">
+                                    <a href="{{ Storage::url($document->chemin_fichier) }}" target="_blank" class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                                        <div class="flex items-center">
+                                            @if(in_array($document->type_document, ['jpg', 'jpeg', 'png']))
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                            @else
+                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                            @endif
+                                            <div class="ml-3">
+                                                <p class="text-sm font-medium text-gray-900 truncate">{{ $document->nom }}</p>
+                                                <p class="text-xs text-gray-500">{{ number_format($document->taille_fichier / 1024, 2) }} KB</p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            @if($sinistre->commentaire_admin)
+            <!-- Commentaire administrateur -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Commentaire de l'administrateur</h3>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    {{ $sinistre->commentaire_admin }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+</x-app-layout> 

@@ -32,10 +32,17 @@ Route::middleware(['auth', 'role:client'])->group(function () {
 });
 
 // Profile routes (accessible by both roles)
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Routes pour l'espace client
+    Route::prefix('client')->name('client.')->group(function () {
+        Route::resource('sinistres', \App\Http\Controllers\Client\SinistreController::class);
+        Route::post('sinistres/{sinistre}/documents', [\App\Http\Controllers\Client\SinistreController::class, 'uploadDocuments'])
+            ->name('sinistres.documents.upload');
+    });
 });
 
 require __DIR__.'/auth.php';

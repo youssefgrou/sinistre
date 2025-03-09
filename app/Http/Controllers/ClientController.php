@@ -12,6 +12,26 @@ class ClientController extends Controller
      */
     public function dashboard(): View
     {
-        return view('client.dashboard');
+        $user = auth()->user();
+        
+        // Récupération des statistiques
+        $totalSinistres = $user->sinistres()->count();
+        $sinistresEnAttente = $user->sinistres()->where('status', 'en_attente')->count();
+        $sinistresValides = $user->sinistres()->where('status', 'validé')->count();
+        $sinistresExpertise = $user->sinistres()->where('status', 'expertise')->count();
+        
+        // Récupération des 5 derniers sinistres
+        $derniersSinistres = $user->sinistres()
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('client.dashboard', compact(
+            'totalSinistres',
+            'sinistresEnAttente',
+            'sinistresValides',
+            'sinistresExpertise',
+            'derniersSinistres'
+        ));
     }
 }
