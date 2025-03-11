@@ -9,7 +9,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Redirect authenticated users based on their role
 Route::get('/dashboard', function () {
     if (auth()->check()) {
         if (auth()->user()->isAdmin()) {
@@ -31,13 +30,11 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/client/dashboard', [ClientController::class, 'dashboard'])->name('client.dashboard');
 });
 
-// Profile routes (accessible by both roles)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Routes pour l'espace client
     Route::prefix('client')->name('client.')->group(function () {
         Route::resource('sinistres', \App\Http\Controllers\Client\SinistreController::class);
         Route::post('sinistres/{sinistre}/documents', [\App\Http\Controllers\Client\SinistreController::class, 'uploadDocuments'])
