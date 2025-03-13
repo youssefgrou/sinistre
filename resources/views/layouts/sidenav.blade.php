@@ -1,14 +1,14 @@
 <!-- Side Navigation -->
-<div class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-30">
+<div class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
     <!-- Logo section -->
-    <div class="h-16 flex items-center px-4 border-b border-gray-200">
+    <div class="h-16 flex items-center px-4 border-b border-gray-200 flex-shrink-0">
         <div class="flex items-center">
             <x-application-logo class="block h-10 w-auto fill-current text-gray-800" />
         </div>
     </div>
 
     <!-- Navigation Links -->
-    <nav class="flex-1 px-2 py-4 space-y-1">
+    <nav class="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
         @if(auth()->user()->isAdmin())
             <!-- Admin Navigation -->
             <a href="{{ route('admin.dashboard') }}" 
@@ -64,7 +64,7 @@
     </nav>
 
     <!-- User Info -->
-    <div class="absolute bottom-0 left-0 right-0 border-t border-gray-200">
+    <div class="flex-shrink-0 border-t border-gray-200 bg-white">
         <div class="p-4">
             <div class="flex items-center bg-gray-50 rounded-lg p-3">
                 <div class="flex-shrink-0">
@@ -90,7 +90,7 @@
 </div>
 
 <!-- Mobile Navigation Toggle -->
-<div class="fixed lg:hidden bottom-4 left-4 z-40">
+<div class="fixed lg:hidden bottom-4 right-4 z-40">
     <button id="mobileMenuButton"
             class="bg-[#00008f] text-white p-3 rounded-full shadow-lg hover:bg-[#000066] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00008f]">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,10 +99,14 @@
     </button>
 </div>
 
+<!-- Overlay -->
+<div id="sidenavOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const mobileMenuButton = document.getElementById('mobileMenuButton');
         const sidebar = document.querySelector('.fixed.inset-y-0');
+        const overlay = document.getElementById('sidenavOverlay');
         let isOpen = false;
 
         function toggleMenu() {
@@ -110,12 +114,19 @@
             if (isOpen) {
                 sidebar.classList.remove('-translate-x-full');
                 sidebar.classList.add('translate-x-0');
+                overlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
             } else {
                 sidebar.classList.remove('translate-x-0');
                 sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
             }
         }
 
         mobileMenuButton.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', () => {
+            if (isOpen) toggleMenu();
+        });
     });
 </script> 

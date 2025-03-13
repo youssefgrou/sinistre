@@ -15,8 +15,7 @@ class SinistreController extends Controller
     public function index(): View
     {
         $sinistres = Sinistre::with('user')->latest()->paginate(10);
-        return view('admin.sinistres.index', compact('sinistres'))
-            ->with('layout', 'layouts.admin');
+        return view('admin.sinistres.index', compact('sinistres'));
     }
 
     /**
@@ -24,8 +23,7 @@ class SinistreController extends Controller
      */
     public function show(Sinistre $sinistre): View
     {
-        return view('admin.sinistres.show', compact('sinistre'))
-            ->with('layout', 'layouts.admin');
+        return view('admin.sinistres.show', compact('sinistre'));
     }
 
     /**
