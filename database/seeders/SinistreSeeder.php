@@ -50,10 +50,16 @@ class SinistreSeeder extends Seeder
                 // Generate random date within last 6 months
                 $date = now()->subDays(rand(1, 180));
 
+                // Get the latest sinistre number and increment it
+                $latestSinistre = Sinistre::latest()->first();
+                $latestNumber = $latestSinistre ? intval(substr($latestSinistre->numero_sinistre, 4)) : 0;
+                $nextNumber = $latestNumber + 1;
+                $numeroSinistre = 'SIN-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
                 // Create sinistre
                 Sinistre::create([
                     'user_id' => $client->id,
-                    'numero_sinistre' => 'SIN-' . date('Y') . '-' . Str::random(8),
+                    'numero_sinistre' => $numeroSinistre,
                     'immatriculation' => rand(1, 9) . chr(rand(65, 90)) . chr(rand(65, 90)) . rand(100, 999),
                     'marque' => $marque,
                     'modele' => $modele,

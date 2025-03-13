@@ -45,9 +45,15 @@ class DatabaseSeeder extends Seeder
             $statuses = ['en_attente', 'en_cours', 'expertise', 'validé', 'refusé'];
             
             for ($j = 1; $j <= 2; $j++) {
+                // Get the latest sinistre number and increment it
+                $latestSinistre = Sinistre::latest()->first();
+                $latestNumber = $latestSinistre ? intval(substr($latestSinistre->numero_sinistre, 4)) : 0;
+                $nextNumber = $latestNumber + 1;
+                $numeroSinistre = 'SIN-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
                 Sinistre::create([
                     'user_id' => $user->id,
-                    'numero_sinistre' => "SIN-{$i}-{$j}",
+                    'numero_sinistre' => $numeroSinistre,
                     'immatriculation' => "ABC{$i}{$j}123",
                     'marque' => 'Renault',
                     'modele' => 'Clio',

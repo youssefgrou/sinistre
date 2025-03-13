@@ -46,8 +46,14 @@ class SinistreController extends Controller
             'documents.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:10240'
         ]);
 
+        // Get the latest sinistre number and increment it
+        $latestSinistre = Sinistre::latest()->first();
+        $latestNumber = $latestSinistre ? intval(substr($latestSinistre->numero_sinistre, 4)) : 0;
+        $nextNumber = $latestNumber + 1;
+        $numeroSinistre = 'SIN-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+
         $sinistre = auth()->user()->sinistres()->create([
-            'numero_sinistre' => 'SIN-' . date('Y') . '-' . Str::random(8),
+            'numero_sinistre' => $numeroSinistre,
             'immatriculation' => $validated['immatriculation'],
             'marque' => $validated['marque'],
             'modele' => $validated['modele'],
