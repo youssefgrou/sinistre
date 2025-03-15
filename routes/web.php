@@ -27,9 +27,10 @@ Route::get('/dashboard', function () {
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('sinistres', SinistreController::class);
     Route::resource('clients', ClientController::class);
+    Route::patch('payments/{payment}', [\App\Http\Controllers\Admin\PaymentController::class, 'update'])->name('payments.update');
 });
 
 // Client routes
@@ -48,6 +49,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('sinistres', \App\Http\Controllers\Client\SinistreController::class);
         Route::post('sinistres/{sinistre}/documents', [\App\Http\Controllers\Client\SinistreController::class, 'uploadDocuments'])
             ->name('sinistres.documents.upload');
+            
+        // Payment routes
+        Route::get('sinistres/{sinistre}/payment', [\App\Http\Controllers\PaymentController::class, 'create'])->name('payment.create');
+        Route::post('sinistres/{sinistre}/payment', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.store');
     });
 });
 

@@ -9,9 +9,11 @@
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold">Informations du client</h2>
+                    @if(Auth::user()->isAdmin() || Auth::user()->id === $client->id)
                     <a href="{{ route('admin.clients.edit', $client) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
                         Modifier
                     </a>
+                    @endif
                 </div>
 
                 <div class="grid grid-cols-2 gap-6">
@@ -40,9 +42,9 @@
             <div class="p-6">
                 <h2 class="text-xl font-semibold mb-4">Sinistres du client</h2>
 
-                @if($client->user->sinistres->count() > 0)
+                @if($client->sinistres->count() > 0)
                     <div class="space-y-4">
-                        @foreach($client->user->sinistres as $sinistre)
+                        @foreach($client->sinistres as $sinistre)
                             <div class="border-b pb-4">
                                 <div class="flex justify-between items-start">
                                     <div>
@@ -56,10 +58,18 @@
                                         @elseif($sinistre->status === 'refusé') bg-red-100 text-red-800
                                         @else bg-gray-100 text-gray-800
                                         @endif">
-                                        {{ $sinistre->status }}
+                                        {{ ucfirst(str_replace('_', ' ', $sinistre->status)) }}
                                     </span>
                                 </div>
                                 <p class="mt-2 text-sm">{{ $sinistre->description }}</p>
+                                @if(Auth::user()->isAdmin())
+                                <div class="mt-2">
+                                    <a href="{{ route('admin.sinistres.show', $sinistre) }}" 
+                                       class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                                        Voir les détails →
+                                    </a>
+                                </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>

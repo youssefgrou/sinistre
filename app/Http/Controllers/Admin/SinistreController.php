@@ -23,6 +23,8 @@ class SinistreController extends Controller
      */
     public function show(Sinistre $sinistre): View
     {
+        $sinistre->load(['user', 'documents', 'payments.user']);
+        
         return view('admin.sinistres.show', compact('sinistre'));
     }
 

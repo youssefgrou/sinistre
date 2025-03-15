@@ -17,19 +17,21 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role',
+        'phone',
+        'address',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -69,18 +71,19 @@ class User extends Authenticatable
         return $this->role === 'client';
     }
 
+    /**
+     * Get the sinistres for the user.
+     */
     public function sinistres(): HasMany
     {
         return $this->hasMany(Sinistre::class);
     }
 
+    /**
+     * Check if the user has a specific role.
+     */
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
-    }
-
-    public function client()
-    {
-        return $this->hasOne(Client::class);
     }
 }

@@ -81,7 +81,7 @@ class SinistreController extends Controller
             }
         }
 
-        return redirect()->route('client.sinistres.show', $sinistre)
+        return redirect()->route('client.sinistres.index')
             ->with('success', 'Votre déclaration de sinistre a été enregistrée avec succès.');
     }
 

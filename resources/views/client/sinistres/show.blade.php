@@ -27,6 +27,16 @@
                                 @endif">
                                 {{ ucfirst(str_replace('_', ' ', $sinistre->status)) }}
                             </span>
+                            
+                            @if($sinistre->status === 'validé')
+                                <a href="{{ route('client.payment.create', $sinistre) }}" 
+                                   class="ml-4 inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                    </svg>
+                                    Effectuer le paiement
+                                </a>
+                            @endif
                         </div>
                         <div class="text-sm text-gray-500">
                             Déclaré le {{ $sinistre->created_at->format('d/m/Y à H:i') }}
@@ -154,6 +164,56 @@
                                     </a>
                                 </div>
                             @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Payment History -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Historique des paiements</h3>
+                    
+                    @if($sinistre->payments->isEmpty())
+                        <p class="text-sm text-gray-500">Aucun paiement n'a été effectué pour le moment.</p>
+                    @else
+                        <div class="mt-4">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Méthode</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($sinistre->payments as $payment)
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ $payment->created_at->format('d/m/Y H:i') }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ number_format($payment->amount, 2) }} MAD
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                        @if($payment->status === 'completed') bg-green-100 text-green-800
+                                                        @elseif($payment->status === 'pending') bg-yellow-100 text-yellow-800
+                                                        @else bg-gray-100 text-gray-800
+                                                        @endif">
+                                                        {{ ucfirst($payment->status) }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ ucfirst($payment->payment_method) }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     @endif
                 </div>

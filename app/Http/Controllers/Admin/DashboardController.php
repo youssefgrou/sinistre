@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Sinistre;
-use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -14,9 +14,8 @@ class DashboardController extends Controller
         $data = [
             // Stats
             'totalClaims' => Sinistre::count(),
-            'newClients' => Client::where('created_at', '>=', now()->subDays(30))->count(),
+            'totalClients' => User::where('role', 'client')->count(),
             'activeClaims' => Sinistre::where('status', 'en_cours')->count(),
-            'totalClients' => Client::count(),
 
             // Recent claims
             'recentClaims' => Sinistre::with('user')
@@ -25,7 +24,8 @@ class DashboardController extends Controller
                 ->get(),
 
             // Recent clients
-            'recentClients' => Client::latest()
+            'recentClients' => User::where('role', 'client')
+                ->latest()
                 ->take(5)
                 ->get(),
 

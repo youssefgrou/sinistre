@@ -1,16 +1,20 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Gestion des clients')
+@section('title', Auth::user()->isAdmin() ? 'Gestion des clients' : 'Mon profil')
 
 @section('content')
     <div class="mb-6 flex justify-between items-center">
-        <h2 class="text-2xl font-semibold text-gray-800">{{ __('Gestion des clients') }}</h2>
+        <h2 class="text-2xl font-semibold text-gray-800">
+            {{ Auth::user()->isAdmin() ? __('Gestion des clients') : __('Mon profil') }}
+        </h2>
+        @if(Auth::user()->isAdmin())
         <a href="{{ route('admin.clients.create') }}" class="inline-flex items-center px-4 py-2 bg-[#00008f] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#000066] focus:bg-[#000066] active:bg-[#000066] focus:outline-none focus:ring-2 focus:ring-[#00008f] focus:ring-offset-2 transition ease-in-out duration-150">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
             {{ __('Ajouter un client') }}
         </a>
+        @endif
     </div>
 
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -23,7 +27,9 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse</th>
+                            @if(Auth::user()->isAdmin())
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -38,20 +44,25 @@
                                                 </span>
                                             </div>
                                         </div>
+                                        @if(Auth::user()->isAdmin())
                                         <a href="{{ route('admin.clients.show', $client) }}" class="text-sm font-medium text-[#00008f] hover:text-[#000066] hover:underline">
                                             {{ $client->name }}
                                         </a>
+                                        @else
+                                        <span class="text-sm font-medium text-gray-900">{{ $client->name }}</span>
+                                        @endif
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">{{ $client->email }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $client->phone }}</div>
+                                    <div class="text-sm text-gray-900">{{ $client->phone ?: 'Non renseigné' }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900">{{ $client->address }}</div>
+                                    <div class="text-sm text-gray-900">{{ $client->address ?: 'Non renseigné' }}</div>
                                 </td>
+                                @if(Auth::user()->isAdmin())
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center space-x-4">
                                         <a href="{{ route('admin.clients.edit', $client) }}" 
@@ -75,11 +86,12 @@
                                         </form>
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                                    Aucun client trouvé
+                                <td colspan="{{ Auth::user()->isAdmin() ? 5 : 4 }}" class="px-6 py-4 text-center text-gray-500">
+                                    {{ Auth::user()->isAdmin() ? 'Aucun client trouvé' : 'Aucune information trouvée' }}
                                 </td>
                             </tr>
                         @endforelse

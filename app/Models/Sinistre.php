@@ -40,4 +40,9 @@ class Sinistre extends Model
     {
         return $this->hasMany(Document::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

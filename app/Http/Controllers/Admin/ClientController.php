@@ -4,19 +4,29 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\View\View;
 
 class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        $clients = Client::with('user')->latest()->paginate(10);
+        $user = Auth::user();
+        
+        if ($user->isAdmin()) {
+            // Admin sees all clients
+            $clients = User::where('role', 'client')->latest()->paginate(10);
+        } else {
+            // Client only sees their own information
+            $clients = User::where('id', $user->id)->paginate(1);
+        }
+
         return view('admin.clients.index', compact('clients'));
     }
 
@@ -33,29 +43,21 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => ['required', 'string', 'max:20'],
-            'address' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'max:255'],
         ]);
 
-        // Create user account
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'role' => 'client',
-        ]);
-
-        // Create client profile
-        $client = Client::create([
-            'user_id' => $user->id,
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
+            'phone' => $validated['phone'],
+            'address' => $validated['address'],
         ]);
 
         return redirect()->route('admin.clients.index')
@@ -65,56 +67,65 @@ class ClientController extends Controller
     /**
      * Display the specified client.
      */
-    public function show(Client $client)
+    public function show(User $client): View
     {
+        $user = Auth::user();
+        
+        if (!$user->isAdmin() && $user->id !== $client->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('admin.clients.show', compact('client'));
     }
 
     /**
      * Show the form for editing the specified client.
      */
-    public function edit(Client $client)
+    public function edit(User $client)
     {
+        $user = Auth::user();
+        
+        if (!$user->isAdmin() && $user->id !== $client->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
         return view('admin.clients.edit', compact('client'));
     }
 
     /**
      * Update the specified client in storage.
      */
-    public function update(Request $request, Client $client)
+    public function update(Request $request, User $client)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $client->user_id],
-            'phone' => ['required', 'string', 'max:20'],
-            'address' => ['required', 'string', 'max:255'],
+        $user = Auth::user();
+        
+        if (!$user->isAdmin() && $user->id !== $client->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $client->id,
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
         ]);
 
-        // Update user account
-        $client->user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
+        $client->update($validated);
 
-        // Update client profile
-        $client->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address,
-        ]);
-
-        return redirect()->route('admin.clients.index')
-            ->with('success', 'Client mis à jour avec succès.');
+        return redirect()->route('admin.clients.show', $client)
+            ->with('success', 'Informations du client mises à jour avec succès.');
     }
 
     /**
      * Remove the specified client from storage.
      */
-    public function destroy(Client $client)
+    public function destroy(User $client)
     {
-        // Delete user account (this will cascade delete the client profile)
-        $client->user->delete();
+        if (!Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $client->delete();
 
         return redirect()->route('admin.clients.index')
             ->with('success', 'Client supprimé avec succès.');
