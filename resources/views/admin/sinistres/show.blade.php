@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Top Grid: Client Info, Status Summary, and Sinistre Management -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <!-- Informations du client -->
+            <!-- Informations du client -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-4">
@@ -99,40 +99,40 @@
                                 <span class="text-gray-900">{{ $sinistre->numero_sinistre }}</span>
                             </div>
                         </div>
-                    </div>
                 </div>
+            </div>
 
-                <!-- Statut et mise à jour -->
+            <!-- Statut et mise à jour -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-4">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Gestion du sinistre</h3>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Gestion du sinistre</h3>
                         <form method="POST" action="{{ route('admin.sinistres.update', $sinistre) }}" class="space-y-4">
-                            @csrf
-                            @method('PUT')
+                        @csrf
+                        @method('PUT')
 
-                            <div>
-                                <x-input-label for="status" :value="__('Statut')" />
-                                <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                    <option value="en_attente" {{ $sinistre->status === 'en_attente' ? 'selected' : '' }}>En attente</option>
-                                    <option value="en_cours" {{ $sinistre->status === 'en_cours' ? 'selected' : '' }}>En cours de traitement</option>
-                                    <option value="expertise" {{ $sinistre->status === 'expertise' ? 'selected' : '' }}>En expertise</option>
-                                    <option value="validé" {{ $sinistre->status === 'validé' ? 'selected' : '' }}>Validé</option>
-                                    <option value="refusé" {{ $sinistre->status === 'refusé' ? 'selected' : '' }}>Refusé</option>
-                                </select>
-                            </div>
+                        <div>
+                            <x-input-label for="status" :value="__('Statut')" />
+                            <select id="status" name="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <option value="en_attente" {{ $sinistre->status === 'en_attente' ? 'selected' : '' }}>En attente</option>
+                                <option value="en_cours" {{ $sinistre->status === 'en_cours' ? 'selected' : '' }}>En cours de traitement</option>
+                                <option value="expertise" {{ $sinistre->status === 'expertise' ? 'selected' : '' }}>En expertise</option>
+                                <option value="validé" {{ $sinistre->status === 'validé' ? 'selected' : '' }}>Validé</option>
+                                <option value="refusé" {{ $sinistre->status === 'refusé' ? 'selected' : '' }}>Refusé</option>
+                            </select>
+                        </div>
 
-                            <div>
-                                <x-input-label for="commentaire_admin" :value="__('Commentaire administratif')" />
+                        <div>
+                            <x-input-label for="commentaire_admin" :value="__('Commentaire administratif')" />
                                 <textarea id="commentaire_admin" name="commentaire_admin" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ $sinistre->commentaire_admin }}</textarea>
                                 <p class="mt-1 text-xs text-gray-500">Ce commentaire sera visible par le client.</p>
-                            </div>
+                        </div>
 
-                            <div class="flex justify-end">
-                                <x-primary-button>
-                                    {{ __('Mettre à jour') }}
-                                </x-primary-button>
-                            </div>
-                        </form>
+                        <div class="flex justify-end">
+                            <x-primary-button>
+                                {{ __('Mettre à jour') }}
+                            </x-primary-button>
+                        </div>
+                    </form>
                     </div>
                 </div>
             </div>

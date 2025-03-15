@@ -12,6 +12,35 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Search Bar -->
+            <div class="mb-6">
+                <form action="{{ route('client.sinistres.index') }}" method="GET" class="flex items-center space-x-4">
+                    <div class="flex-1 relative">
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Rechercher par numéro, immatriculation, marque..."
+                            class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:border-[#00008f] focus:ring focus:ring-[#00008f] focus:ring-opacity-20 transition-all duration-200"
+                        >
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    @if(request('search'))
+                        <a href="{{ route('client.sinistres.index') }}" 
+                           class="inline-flex items-center px-4 py-3 bg-gray-100 border border-transparent rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-all duration-200">
+                            <svg class="w-5 h-5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Réinitialiser
+                        </a>
+                    @endif
+                </form>
+            </div>
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     @if($sinistres->isEmpty())
@@ -19,15 +48,36 @@
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">Aucun sinistre</h3>
-                            <p class="mt-1 text-sm text-gray-500">Commencez par déclarer un sinistre.</p>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900">
+                                @if(request('search'))
+                                    Aucun résultat trouvé pour "{{ request('search') }}"
+                                @else
+                                    Aucun sinistre
+                                @endif
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500">
+                                @if(request('search'))
+                                    Essayez avec d'autres termes de recherche.
+                                @else
+                                    Commencez par déclarer un sinistre.
+                                @endif
+                            </p>
                             <div class="mt-6">
-                                <a href="{{ route('client.sinistres.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#00008f] hover:bg-[#000066] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00008f]">
-                                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Déclarer un sinistre
-                                </a>
+                                @if(request('search'))
+                                    <a href="{{ route('client.sinistres.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Réinitialiser la recherche
+                                    </a>
+                                @else
+                                    <a href="{{ route('client.sinistres.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#00008f] hover:bg-[#000066] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00008f]">
+                                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                        </svg>
+                                        Déclarer un sinistre
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     @else

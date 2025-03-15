@@ -14,9 +14,22 @@ class SinistreController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $sinistres = auth()->user()->sinistres()->latest()->paginate(10);
+        $query = auth()->user()->sinistres()->latest();
+
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('numero_sinistre', 'like', "%{$search}%")
+                  ->orWhere('immatriculation', 'like', "%{$search}%")
+                  ->orWhere('marque', 'like', "%{$search}%")
+                  ->orWhere('modele', 'like', "%{$search}%")
+                  ->orWhere('lieu_sinistre', 'like', "%{$search}%");
+            });
+        }
+
+        $sinistres = $query->paginate(10)->withQueryString();
         return view('client.sinistres.index', compact('sinistres'));
     }
 
