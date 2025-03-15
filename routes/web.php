@@ -31,6 +31,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('sinistres', SinistreController::class);
     Route::resource('clients', ClientController::class);
     Route::patch('payments/{payment}', [\App\Http\Controllers\Admin\PaymentController::class, 'update'])->name('payments.update');
+    Route::get('/sinistres/export/pdf', [SinistreController::class, 'exportPDF'])->name('sinistres.export.pdf');
+    Route::get('/sinistres/export/csv', [SinistreController::class, 'exportCSV'])->name('sinistres.export.csv');
 });
 
 // Client routes

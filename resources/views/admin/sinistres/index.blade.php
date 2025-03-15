@@ -3,9 +3,7 @@
 @section('title', 'Gestion des Sinistres')
 
 @section('content')
-    <div class="mb-6">
-        <h2 class="text-2xl font-semibold text-gray-800">{{ __('Gestion des Sinistres') }}</h2>
-    </div>
+    
 
     <!-- Search Bar -->
     <div class="mb-6">
@@ -34,7 +32,27 @@
             @endif
         </form>
     </div>
-
+    <div class="mb-6">
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-semibold text-gray-800">{{ __('Gestion des Sinistres') }}</h2>
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('admin.sinistres.export.pdf', request()->query()) }}" 
+                   class="group inline-flex items-center px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-xl text-sm font-medium text-gray-700 hover:bg-red-50 hover:border-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-2 text-red-500 group-hover:text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span class="group-hover:text-red-700">{{ __('PDF') }}</span>
+                </a>
+                <a href="{{ route('admin.sinistres.export.csv', request()->query()) }}" 
+                   class="group inline-flex items-center px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-xl text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-2 text-emerald-500 group-hover:text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <span class="group-hover:text-emerald-700">{{ __('CSV') }}</span>
+                </a>
+            </div>
+        </div>
+    </div>
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
             <div class="overflow-x-auto">

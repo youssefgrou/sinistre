@@ -15,6 +15,10 @@ class Payment extends Model
         'payment_method',
         'payment_id',
         'status',
+        'cheque_number',
+        'bank_name',
+        'transaction_id',
+        'bank_name_virement'
     ];
 
     public function sinistre(): BelongsTo
