@@ -15,11 +15,21 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sinistre_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('payment_id')->unique();
             $table->decimal('amount', 10, 2);
-            $table->string('currency')->default('MAD');
-            $table->string('payment_method');
-            $table->string('payment_id')->unique(); // Stripe payment ID
-            $table->string('status');
+            $table->enum('payment_method', ['cheque', 'virement', 'especes']);
+            $table->string('name');
+            $table->string('address');
+            $table->string('phone');
+            $table->string('status')->default('pending');
+            // Cheque specific fields
+            $table->string('cheque_number')->nullable();
+            $table->string('bank_name')->nullable();
+            // Virement specific fields
+            $table->string('transaction_id')->nullable();
+            $table->string('bank_name_virement')->nullable();
+            // Especes specific field
+            $table->string('receipt_number')->nullable();
             $table->timestamps();
         });
     }

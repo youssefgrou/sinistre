@@ -16,34 +16,40 @@ class PaymentController extends Controller
     public function store(Request $request, Sinistre $sinistre)
     {
         $validated = $request->validate([
+            'payment_method' => 'required|in:cheque,virement,especes',
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|string|in:cheque,virement',
-            'cheque_number' => 'required_if:payment_method,cheque|string|max:50|nullable',
-            'bank_name' => 'required_if:payment_method,cheque|string|max:100|nullable',
-            'transaction_id' => 'required_if:payment_method,virement|string|max:50|nullable',
-            'bank_name_virement' => 'required_if:payment_method,virement|string|max:100|nullable',
+            // Conditional validation based on payment method
+            'cheque_number' => 'required_if:payment_method,cheque|nullable|string|max:50',
+            'bank_name' => 'required_if:payment_method,cheque|nullable|string|max:100',
+            'transaction_id' => 'required_if:payment_method,virement|nullable|string|max:100',
+            'bank_name_virement' => 'required_if:payment_method,virement|nullable|string|max:100',
+            'receipt_number' => 'required_if:payment_method,especes|nullable|string|max:50',
         ]);
 
-        $payment = Payment::create([
-            'sinistre_id' => $sinistre->id,
-            'user_id' => auth()->id(),
-            'amount' => $validated['amount'],
-            'currency' => 'MAD',
-            'payment_method' => $validated['payment_method'],
-            'payment_id' => $validated['payment_method'] === 'cheque' 
-                ? 'CHQ-' . $validated['cheque_number']
-                : 'VIR-' . $validated['transaction_id'],
+        // Generate a unique payment ID based on the method
+        $prefix = match($validated['payment_method']) {
+            'cheque' => 'CHQ',
+            'virement' => 'VIR',
+            'especes' => 'ESP',
+        };
+        
+        $paymentCount = Payment::count() + 1;
+        $paymentId = $prefix . '-' . str_pad($paymentCount, 4, '0', STR_PAD_LEFT);
+
+        // Create the payment record
+        $payment = new Payment([
+            ...$validated,
             'status' => 'pending',
-            'cheque_number' => $validated['cheque_number'] ?? null,
-            'bank_name' => $validated['bank_name'] ?? null,
-            'transaction_id' => $validated['transaction_id'] ?? null,
-            'bank_name_virement' => $validated['bank_name_virement'] ?? null,
+            'user_id' => auth()->id(),
+            'payment_id' => $paymentId
         ]);
+
+        $sinistre->payments()->save($payment);
 
         return redirect()->route('client.sinistres.show', $sinistre)
-            ->with('success', 'Informations de paiement soumises avec succès !');
+            ->with('success', 'Votre paiement a été enregistré avec succès.');
     }
 }

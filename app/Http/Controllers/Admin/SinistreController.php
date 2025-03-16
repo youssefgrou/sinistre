@@ -154,7 +154,7 @@ class SinistreController extends Controller
                 $sinistre->heure_sinistre,
                 $typesSinistres[$sinistre->type_sinistre] ?? ucfirst(str_replace('_', ' ', $sinistre->type_sinistre)),
                 ucfirst(str_replace('_', ' ', $sinistre->status)),
-                $totalPayments > 0 ? number_format($totalPayments, 2) . ' €' : 'Non payé',
+                $totalPayments > 0 ? number_format($totalPayments, 2) . ' MAD' : 'Non payé',
                 $lastPayment ? $lastPayment->created_at->format('d/m/Y') : '-'
             ]);
         }
@@ -167,5 +167,17 @@ class SinistreController extends Controller
         ];
         
         return response($csv->getContent(), 200, $headers);
+    }
+
+    /**
+     * Generate a PDF document for a single sinistre.
+     */
+    public function print(Sinistre $sinistre)
+    {
+        $sinistre->load(['user', 'payments']);
+        
+        $pdf = PDF::loadView('admin.sinistres.print', compact('sinistre'));
+        
+        return $pdf->download('sinistre-' . $sinistre->numero_sinistre . '.pdf');
     }
 } 

@@ -8,6 +8,7 @@ use App\Models\Sinistre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Gate;
+use PDF;
 
 class SinistreController extends Controller
 {
@@ -63,7 +64,7 @@ class SinistreController extends Controller
         $latestSinistre = Sinistre::latest()->first();
         $latestNumber = $latestSinistre ? intval(substr($latestSinistre->numero_sinistre, 4)) : 0;
         $nextNumber = $latestNumber + 1;
-        $numeroSinistre = 'SIN-' . str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+        $numeroSinistre = 'SIN-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
         $sinistre = auth()->user()->sinistres()->create([
             'numero_sinistre' => $numeroSinistre,
@@ -159,5 +160,20 @@ class SinistreController extends Controller
         }
 
         return back()->with('success', 'Les documents ont été téléchargés avec succès.');
+    }
+
+    /**
+     * Generate a PDF document for the sinistre.
+     */
+    public function print(Sinistre $sinistre)
+    {
+        // Check if the current user owns this sinistre
+        if ($sinistre->user_id !== auth()->id()) {
+            abort(403, 'Vous n\'êtes pas autorisé à imprimer cette déclaration.');
+        }
+
+        $pdf = PDF::loadView('client.sinistres.print', compact('sinistre'));
+        
+        return $pdf->download('sinistre-' . $sinistre->numero_sinistre . '.pdf');
     }
 }

@@ -33,6 +33,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('payments/{payment}', [\App\Http\Controllers\Admin\PaymentController::class, 'update'])->name('payments.update');
     Route::get('/sinistres/export/pdf', [SinistreController::class, 'exportPDF'])->name('sinistres.export.pdf');
     Route::get('/sinistres/export/csv', [SinistreController::class, 'exportCSV'])->name('sinistres.export.csv');
+    Route::get('/sinistres/{sinistre}/print', [SinistreController::class, 'print'])->name('sinistres.print');
 });
 
 // Client routes
@@ -55,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Payment routes
         Route::get('sinistres/{sinistre}/payment', [\App\Http\Controllers\PaymentController::class, 'create'])->name('payment.create');
         Route::post('sinistres/{sinistre}/payment', [\App\Http\Controllers\PaymentController::class, 'store'])->name('payment.store');
+        Route::get('/sinistres/{sinistre}/print', [App\Http\Controllers\Client\SinistreController::class, 'print'])->name('sinistres.print');
     });
 });
 

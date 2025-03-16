@@ -15,7 +15,7 @@
                         <!-- Payment Method Selection -->
                         <div class="space-y-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Mode de Paiement</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <!-- Cheque Option -->
                                 <label class="relative flex items-center justify-between p-4 cursor-pointer bg-white border rounded-xl hover:border-indigo-500 transition-colors"
                                        :class="{ 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20': paymentMethod === 'cheque' }">
@@ -61,6 +61,30 @@
                                          :class="{ 'border-indigo-600 bg-indigo-600': paymentMethod === 'virement' }">
                                         <div class="h-3 w-3 rounded-full bg-white"
                                              x-show="paymentMethod === 'virement'"></div>
+                                    </div>
+                                </label>
+
+                                <!-- Espèces Option -->
+                                <label class="relative flex items-center justify-between p-4 cursor-pointer bg-white border rounded-xl hover:border-indigo-500 transition-colors"
+                                       :class="{ 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20': paymentMethod === 'especes' }">
+                                    <div class="flex items-center">
+                                        <input type="radio" name="payment_method" value="especes" 
+                                               class="hidden"
+                                               x-model="paymentMethod">
+                                        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-50">
+                                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-4">
+                                            <h3 class="font-medium text-gray-900">Espèces</h3>
+                                            <p class="text-sm text-gray-500">Paiement en espèces</p>
+                                        </div>
+                                    </div>
+                                    <div class="shrink-0 h-6 w-6 flex items-center justify-center rounded-full border"
+                                         :class="{ 'border-indigo-600 bg-indigo-600': paymentMethod === 'especes' }">
+                                        <div class="h-3 w-3 rounded-full bg-white"
+                                             x-show="paymentMethod === 'especes'"></div>
                                     </div>
                                 </label>
                             </div>
@@ -146,6 +170,19 @@
                                         x-bind:required="paymentMethod === 'virement'"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         value="{{ old('bank_name_virement') }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Espèces Specific Fields -->
+                        <div x-show="paymentMethod === 'especes'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="receipt_number" class="block text-sm font-medium text-gray-700">Numéro du reçu</label>
+                                    <input type="text" name="receipt_number" id="receipt_number"
+                                        x-bind:required="paymentMethod === 'especes'"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                        value="{{ old('receipt_number') }}">
                                 </div>
                             </div>
                         </div>
