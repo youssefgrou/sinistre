@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sinistre {{ $sinistre->numero_sinistre }}</title>
     <style>
+        @font-face {
+            font-family: 'Roboto';
+            src: url({{ storage_path('fonts/Roboto-Regular.ttf') }}) format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url({{ storage_path('fonts/Roboto-Medium.ttf') }}) format("truetype");
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Roboto';
+            src: url({{ storage_path('fonts/Roboto-Bold.ttf') }}) format("truetype");
+            font-weight: bold;
+            font-style: normal;
+        }
         * {
             font-family: DejaVu Sans, sans-serif;
         }
@@ -79,6 +97,7 @@
         .value {
             color: #333;
             font-weight: 500;
+            font-family: 'Roboto', sans-serif;
         }
         .status-badge {
             display: inline-block;
@@ -122,7 +141,7 @@
                     <table class="info-table">
                         <tr>
                             <td class="label">Nom</td>
-                            <td class="value">{{ $sinistre->user->name }}</td>
+                            <td class="value ">{{ $sinistre->user->name }}</td>
                         </tr>
                         <tr>
                             <td class="label">Email</td>
@@ -222,6 +241,41 @@
             </tr>
         </table>
         @endif
+    </div>
+
+    <!-- Calculation Details Section -->
+    <div class="section">
+        <h2 class="section-title">Détails du calcul d'indemnisation</h2>
+        <table class="info-table">
+            <tr>
+                <td style="width: 50%;">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">Montant du sinistre</td>
+                            <td class="value">{{ $sinistre->formatted_montant_sinistre }}</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Franchise</td>
+                            <td class="value">{{ $sinistre->formatted_franchise }}</td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="width: 50%;">
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">Taux de couverture</td>
+                            <td class="value">{{ number_format($sinistre->taux_couverture, 2) }} %</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Indemnisation calculée</td>
+                            <td class="value" style="font-weight: bold; color: #00008f;">
+                                {{ $sinistre->formatted_indemnisation }}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
     </div>
 
     @if($sinistre->payments->isNotEmpty())

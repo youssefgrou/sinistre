@@ -49,6 +49,15 @@ class PaymentController extends Controller
 
         $sinistre->payments()->save($payment);
 
+        // Update the montant_sinistre with only the total of completed payments
+        $totalCompletedPayments = $sinistre->payments()
+            ->where('status', 'completed')
+            ->sum('amount');
+            
+        $sinistre->update([
+            'montant_sinistre' => $totalCompletedPayments
+        ]);
+
         return redirect()->route('client.sinistres.show', $sinistre)
             ->with('success', 'Votre paiement a été enregistré avec succès.');
     }

@@ -197,6 +197,84 @@
                 </div>
             </div>
 
+            <!-- Calculation Details -->
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Détails du calcul d'indemnisation</h3>
+                    
+                    <!-- Payment Summary -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Résumé des paiements</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gray-600">Total des paiements validés:</span>
+                                <span class="font-medium">{{ number_format($sinistre->payments->where('status', 'completed')->sum('amount'), 2) }} MAD</span>
+                            </div>
+                            <div>
+                                <span class="text-gray-600">Paiements en attente:</span>
+                                <span class="font-medium">{{ number_format($sinistre->payments->where('status', 'pending')->sum('amount'), 2) }} MAD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ route('admin.sinistres.update', $sinistre) }}" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <x-input-label for="montant_sinistre" :value="__('Montant du sinistre (MAD)')" />
+                                <x-text-input id="montant_sinistre" name="montant_sinistre" type="number" step="0.01" 
+                                    class="mt-1 block w-full bg-gray-100" 
+                                    :value="$sinistre->montant_sinistre" 
+                                    readonly 
+                                    title="Ce montant est automatiquement calculé à partir des paiements validés" />
+                                <p class="mt-1 text-xs text-gray-500">Ce montant est automatiquement mis à jour en fonction des paiements validés</p>
+                            </div>
+                            <div>
+                                <x-input-label for="franchise" :value="__('Franchise (MAD)')" />
+                                <x-text-input id="franchise" name="franchise" type="number" step="0.01" class="mt-1 block w-full" :value="$sinistre->franchise" oninput="calculateIndemnisation()" />
+                            </div>
+                            <div>
+                                <x-input-label for="taux_couverture" :value="__('Taux de couverture (%)')" />
+                                <x-text-input id="taux_couverture" name="taux_couverture" type="number" step="0.01" class="mt-1 block w-full" :value="$sinistre->taux_couverture" oninput="calculateIndemnisation()" />
+                            </div>
+                            <div>
+                                <x-input-label for="indemnisation_display" :value="__('Indemnisation calculée (MAD)')" />
+                                <x-text-input id="indemnisation_display" type="text" class="mt-1 block w-full bg-gray-100" :value="$sinistre->formatted_indemnisation" disabled />
+                                <input type="hidden" id="indemnisation" name="indemnisation" :value="$sinistre->indemnisation" />
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-4">
+                            <x-primary-button>
+                                {{ __('Mettre à jour le calcul') }}
+                            </x-primary-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function calculateIndemnisation() {
+                    const montantSinistre = parseFloat(document.getElementById('montant_sinistre').value) || 0;
+                    const franchise = parseFloat(document.getElementById('franchise').value) || 0;
+                    const tauxCouverture = parseFloat(document.getElementById('taux_couverture').value) || 0;
+                    
+                    const indemnisation = (montantSinistre - franchise) * (tauxCouverture / 100);
+                    const formattedIndemnisation = new Intl.NumberFormat('fr-FR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(Math.max(0, indemnisation));
+                    
+                    // Update the display field
+                    document.getElementById('indemnisation_display').value = formattedIndemnisation + ' MAD';
+                    // Update the hidden field with the raw number
+                    document.getElementById('indemnisation').value = Math.max(0, indemnisation);
+                }
+
+                // Calculate initial value
+                document.addEventListener('DOMContentLoaded', calculateIndemnisation);
+            </script>
+
             <!-- Description et circonstances -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
                 <div class="p-6">

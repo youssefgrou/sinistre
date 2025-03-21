@@ -14,6 +14,16 @@ class PaymentController extends Controller
             'status' => 'completed'
         ]);
 
+        // Update the sinistre's montant_sinistre with only completed payments
+        $sinistre = $payment->sinistre;
+        $totalCompletedPayments = $sinistre->payments()
+            ->where('status', 'completed')
+            ->sum('amount');
+
+        $sinistre->update([
+            'montant_sinistre' => $totalCompletedPayments
+        ]);
+
         return redirect()->back()->with('success', 'Paiement validé avec succès.');
     }
 } 

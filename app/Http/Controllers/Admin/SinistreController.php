@@ -53,14 +53,23 @@ class SinistreController extends Controller
     public function update(Request $request, Sinistre $sinistre)
     {
         $validated = $request->validate([
-            'status' => 'required|in:en_attente,en_cours,expertise,validé,refusé',
-            'commentaire_admin' => 'nullable|string'
+            'status' => 'nullable|in:en_attente,en_cours,expertise,validé,refusé',
+            'commentaire_admin' => 'nullable|string',
+            'montant_sinistre' => 'nullable|numeric|min:0',
+            'franchise' => 'nullable|numeric|min:0',
+            'taux_couverture' => 'nullable|numeric|between:0,100',
+            'indemnisation' => 'nullable|numeric|min:0'
         ]);
+
+        // Filter out null values to prevent overwriting existing data
+        $validated = array_filter($validated, function($value) {
+            return $value !== null;
+        });
 
         $sinistre->update($validated);
 
         return redirect()->route('admin.sinistres.show', $sinistre)
-            ->with('success', 'Le statut du sinistre a été mis à jour avec succès.');
+            ->with('success', 'Le sinistre a été mis à jour avec succès.');
     }
 
     /**

@@ -47,7 +47,7 @@
             background: white;
         }
         th {
-            background-color: #00008f;
+            background-color: #6868ff;
             color: white;
             font-weight: bold;
             padding: 12px 8px;
@@ -135,7 +135,7 @@
                 <th>Type</th>
                 <th>Statut</th>
                 <th>Paiement</th>
-                <th>Mode</th>
+                <th>Method</th>
             </tr>
         </thead>
         <tbody>
@@ -186,7 +186,8 @@
                                 $payment = $sinistre->payments->last();
                                 $methodLabels = [
                                     'cheque' => 'Chèque',
-                                    'virement' => 'Virement'
+                                    'virement' => 'Virement',
+                                    'especes' => 'Espèces'
                                 ];
                             @endphp
                             <span class="method-badge method-{{ $payment->payment_method }}">
