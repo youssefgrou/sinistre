@@ -108,7 +108,7 @@
                 </button>
 
                 <!-- Divider -->
-                <div class="relative">
+                {{-- <div class="relative">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-gray-200"></div>
                     </div>
@@ -125,7 +125,7 @@
                     <a href="#" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition-colors duration-200">
                         <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="Facebook" class="h-5 w-5">
                     </a>
-                </div>
+                </div> --}}
 
                 <!-- Sign In Link -->
                 <p class="text-center text-sm text-gray-600">

@@ -34,6 +34,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/sinistres/export/pdf', [SinistreController::class, 'exportPDF'])->name('sinistres.export.pdf');
     Route::get('/sinistres/export/csv', [SinistreController::class, 'exportCSV'])->name('sinistres.export.csv');
     Route::get('/sinistres/{sinistre}/print', [SinistreController::class, 'print'])->name('sinistres.print');
+    
+    // Document routes
+    Route::get('documents/{document}/show', [\App\Http\Controllers\Admin\DocumentController::class, 'show'])
+        ->name('documents.show');
+    Route::get('documents/{document}/download', [\App\Http\Controllers\Admin\DocumentController::class, 'download'])
+        ->name('documents.download');
 });
 
 // Client routes

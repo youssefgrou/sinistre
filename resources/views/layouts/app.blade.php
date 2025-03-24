@@ -14,9 +14,9 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased" x-data="{ open: false }">
+    <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            @include('layouts.sidenav')
+            <x-sidenav />
 
             <div class="lg:pl-64 flex flex-col min-h-screen">
                 <!-- Page Heading -->
@@ -48,10 +48,8 @@
                 @endif
 
                 <!-- Page Content -->
-                <main class="flex-1 py-6">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        {{ $slot }}
-                    </div>
+                <main class="flex-1">
+                    {{ $slot }}
                 </main>
             </div>
         </div>

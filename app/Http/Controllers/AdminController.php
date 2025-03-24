@@ -12,7 +12,6 @@ class AdminController extends Controller
      */
     public function dashboard(): View
     {
-        return view('admin.dashboard')
-            ->with('layout', 'layouts.admin');
+        return view('admin.dashboard');
     }
 }
