@@ -136,9 +136,9 @@
                     </h1>
                     <p class="mt-6 text-lg text-gray-600 max-w-3xl relative">
                         <span class="bg-gradient-to-r from-[#00008F]/10 to-transparent px-4 py-1 rounded-full">
-                            Simplifiez la gestion de vos sinistres automobiles
+                            "Simplifiez la gestion de vos sinistres automobiles
                             </span>
-                        avec notre plateforme intuitive. Déclaration rapide, suivi en temps réel et accompagnement personnalisé.
+                        avec notre plateforme intuitive. Déclaration rapide, suivi en temps réel et recevez un accompagnement personnalisé à chaque étape."
                     </p>
                     
                     <!-- Stats -->
@@ -217,7 +217,7 @@
     <section id="services" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <h2 class="text-3xl font-bold text-gray-900">Nos Services de Gestion des Sinistres</h2>
+                <h2 class="text-3xl font-bold text-gray-900">Notre garantie : une gestion transparente et réactive de vos sinistres</h2>
                 <p class="mt-4 text-lg text-gray-600">Une expertise complète pour tous types de sinistres automobiles</p>
             </div>
             <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">

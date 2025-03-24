@@ -288,7 +288,7 @@
                         <table class="info-table">
                             <tr>
                                 <td class="label">Montant total</td>
-                                <td class="value">{{ number_format($sinistre->payments->sum('amount'), 2, ',', ' ') }} €</td>
+                                <td class="value">{{ number_format($sinistre->payments->sum('amount'), 2, ',', ' ') }} MAD</td>
                             </tr>
                         </table>
                     </td>

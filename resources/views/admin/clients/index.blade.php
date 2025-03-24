@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold text-gray-800">
-                {{ Auth::user()->isAdmin() ? __('Gestion des clients') : __('Mon profil') }}
+                {{ Auth::user()->isAdmin() ? __('Inscription du Client') : __('Mon profil') }}
             </h2>
             @if(Auth::user()->isAdmin())
             <a href="{{ route('admin.clients.create') }}" class="inline-flex items-center px-4 py-2 bg-[#00008f] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#000066] focus:bg-[#000066] active:bg-[#000066] focus:outline-none focus:ring-2 focus:ring-[#00008f] focus:ring-offset-2 transition ease-in-out duration-150">
