@@ -9,6 +9,65 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
+                    <!-- Payment Summary -->
+                    <div class="mb-6 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex items-center justify-between border-b border-gray-100 p-4">
+                            <h3 class="text-base font-semibold text-gray-900">Résumé du paiement</h3>
+                            @if($remainingAmount <= 0)
+                                <div class="flex items-center bg-green-50 px-2.5 py-1 rounded-full">
+                                    <svg class="w-4 h-4 text-green-600 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="text-xs font-medium text-green-600">Franchise payée</span>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <div class="p-4 space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2 md:col-span-1">
+                                    <div class="flex justify-between items-baseline">
+                                        <span class="text-xs font-medium text-gray-500">Montant total:</span>
+                                        <span class="text-sm font-semibold text-gray-900">{{ number_format($sinistre->montant_sinistre, 2) }} <span class="text-xs font-normal text-gray-500">MAD</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-baseline mt-2">
+                                        <span class="text-xs font-medium text-gray-500">Taux de couverture:</span>
+                                        <span class="text-sm font-semibold text-gray-900">{{ number_format($sinistre->taux_couverture, 2) }} <span class="text-xs font-normal text-gray-500">%</span></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-span-2 md:col-span-1">
+                                    <div class="flex justify-between items-baseline">
+                                        <span class="text-xs font-medium text-[#00008f]/70">Franchise:</span>
+                                        <span class="text-sm font-semibold text-[#00008f]">{{ number_format($sinistre->franchise, 2) }} <span class="text-xs font-normal text-[#00008f]/70">MAD</span></span>
+                                    </div>
+                                    <div class="flex justify-between items-baseline mt-2">
+                                        <span class="text-xs font-medium text-green-600/70">Indemnisation:</span>
+                                        <span class="text-sm font-semibold text-green-600">{{ number_format($sinistre->indemnisation, 2) }} <span class="text-xs font-normal text-green-600/70">MAD</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-4">
+                                <div class="flex justify-between items-baseline">
+                                    <span class="text-xs font-medium text-gray-500">Montant à payer:</span>
+                                    <span class="text-base font-bold {{ $remainingAmount <= 0 ? 'text-green-600' : 'text-[#00008f]' }}">
+                                        {{ number_format($remainingAmount, 2) }} <span class="text-xs font-normal {{ $remainingAmount <= 0 ? 'text-green-600/70' : 'text-[#00008f]/70' }}">MAD</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bg-blue-50/50 rounded-lg p-3 flex items-start space-x-2">
+                                <svg class="w-4 h-4 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <p class="text-xs text-blue-800">
+                                    <span class="font-semibold">Note:</span> Seule la franchise de {{ number_format($sinistre->franchise, 2) }} MAD est à payer. L'indemnisation sera versée par l'assurance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <form action="{{ route('client.payment.store', $sinistre) }}" method="POST" class="space-y-6" x-data="{ paymentMethod: 'cheque' }">
                         @csrf
                         
@@ -17,82 +76,78 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Mode de Paiement</label>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <!-- Cheque Option -->
-                                <label class="relative flex items-center justify-between p-4 cursor-pointer bg-white border rounded-xl hover:border-indigo-500 transition-colors"
-                                       :class="{ 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20': paymentMethod === 'cheque' }">
-                                    <div class="flex items-center">
-                                        <input type="radio" name="payment_method" value="cheque" 
-                                               class="hidden"
-                                               x-model="paymentMethod">
-                                        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-50">
-                                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:border-[#00008f] transition-colors"
+                                       :class="{ 'border-[#00008f] ring-2 ring-[#00008f] ring-opacity-20': paymentMethod === 'cheque' }">
+                                    <input type="radio" name="payment_method" value="cheque" class="sr-only" x-model="paymentMethod" checked>
+                                    <div class="flex items-center w-full">
+                                        <div class="flex-shrink-0 bg-[#e0e7ff] rounded-lg p-2">
+                                            <svg class="w-6 h-6 text-[#00008f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
                                         </div>
-                                        <div class="ml-4">
-                                            <h3 class="font-medium text-gray-900">Chèque</h3>
-                                            <p class="text-sm text-gray-500">Paiement par chèque bancaire</p>
+                                        <div class="ml-4 flex flex-col">
+                                            <span class="block text-sm font-medium text-gray-900">Chèque</span>
+                                            <span class="block text-xs text-gray-500">Paiement par chèque bancaire</span>
                                         </div>
-                                    </div>
-                                    <div class="shrink-0 h-6 w-6 flex items-center justify-center rounded-full border"
-                                         :class="{ 'border-indigo-600 bg-indigo-600': paymentMethod === 'cheque' }">
-                                        <div class="h-3 w-3 rounded-full bg-white"
-                                             x-show="paymentMethod === 'cheque'"></div>
+                                        <div class="ml-auto h-5 w-5 flex items-center" x-show="paymentMethod === 'cheque'">
+                                            <svg class="w-5 h-5 text-[#00008f]" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
                                     </div>
                                 </label>
 
                                 <!-- Virement Option -->
-                                <label class="relative flex items-center justify-between p-4 cursor-pointer bg-white border rounded-xl hover:border-indigo-500 transition-colors"
-                                       :class="{ 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20': paymentMethod === 'virement' }">
-                                    <div class="flex items-center">
-                                        <input type="radio" name="payment_method" value="virement" 
-                                               class="hidden"
-                                               x-model="paymentMethod">
-                                        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-50">
-                                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:border-[#00008f] transition-colors"
+                                       :class="{ 'border-[#00008f] ring-2 ring-[#00008f] ring-opacity-20': paymentMethod === 'virement' }">
+                                    <input type="radio" name="payment_method" value="virement" class="sr-only" x-model="paymentMethod">
+                                    <div class="flex items-center w-full">
+                                        <div class="flex-shrink-0 bg-[#e0e7ff] rounded-lg p-2">
+                                            <svg class="w-6 h-6 text-[#00008f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
                                             </svg>
                                         </div>
-                                        <div class="ml-4">
-                                            <h3 class="font-medium text-gray-900">Virement</h3>
-                                            <p class="text-sm text-gray-500">Virement bancaire direct</p>
+                                        <div class="ml-4 flex flex-col">
+                                            <span class="block text-sm font-medium text-gray-900">Virement</span>
+                                            <span class="block text-xs text-gray-500">Virement bancaire direct</span>
                                         </div>
-                                    </div>
-                                    <div class="shrink-0 h-6 w-6 flex items-center justify-center rounded-full border"
-                                         :class="{ 'border-indigo-600 bg-indigo-600': paymentMethod === 'virement' }">
-                                        <div class="h-3 w-3 rounded-full bg-white"
-                                             x-show="paymentMethod === 'virement'"></div>
+                                        <div class="ml-auto h-5 w-5 flex items-center" x-show="paymentMethod === 'virement'">
+                                            <svg class="w-5 h-5 text-[#00008f]" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
                                     </div>
                                 </label>
 
-                                <!-- Espèces Option -->
-                                <label class="relative flex items-center justify-between p-4 cursor-pointer bg-white border rounded-xl hover:border-indigo-500 transition-colors"
-                                       :class="{ 'border-indigo-500 ring-2 ring-indigo-500 ring-opacity-20': paymentMethod === 'especes' }">
-                                    <div class="flex items-center">
-                                        <input type="radio" name="payment_method" value="especes" 
-                                               class="hidden"
-                                               x-model="paymentMethod">
-                                        <div class="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-50">
-                                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <!-- Especes Option -->
+                                <label class="relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none hover:border-[#00008f] transition-colors"
+                                       :class="{ 'border-[#00008f] ring-2 ring-[#00008f] ring-opacity-20': paymentMethod === 'especes' }">
+                                    <input type="radio" name="payment_method" value="especes" class="sr-only" x-model="paymentMethod">
+                                    <div class="flex items-center w-full">
+                                        <div class="flex-shrink-0 bg-[#e0e7ff] rounded-lg p-2">
+                                            <svg class="w-6 h-6 text-[#00008f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2" />
                                             </svg>
                                         </div>
-                                        <div class="ml-4">
-                                            <h3 class="font-medium text-gray-900">Espèces</h3>
-                                            <p class="text-sm text-gray-500">Paiement en espèces</p>
+                                        <div class="ml-4 flex flex-col">
+                                            <span class="block text-sm font-medium text-gray-900">Espèces</span>
+                                            <span class="block text-xs text-gray-500">Paiement en espèces</span>
                                         </div>
-                                    </div>
-                                    <div class="shrink-0 h-6 w-6 flex items-center justify-center rounded-full border"
-                                         :class="{ 'border-indigo-600 bg-indigo-600': paymentMethod === 'especes' }">
-                                        <div class="h-3 w-3 rounded-full bg-white"
-                                             x-show="paymentMethod === 'especes'"></div>
+                                        <div class="ml-auto h-5 w-5 flex items-center" x-show="paymentMethod === 'especes'">
+                                            <svg class="w-5 h-5 text-[#00008f]" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
                                     </div>
                                 </label>
                             </div>
                         </div>
 
+                        <!-- Payment Details -->
+                        <div class="space-y-6">
                         <!-- Name -->
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Nom Complet</label>
+                                <label for="name" class="block text-sm font-medium text-gray-700">Nom complet</label>
                             <input type="text" name="name" id="name" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 value="{{ old('name') }}">
@@ -126,71 +181,68 @@
                         <!-- Amount -->
                         <div>
                             <label for="amount" class="block text-sm font-medium text-gray-700">Montant (MAD)</label>
-                            <input type="number" name="amount" id="amount" step="0.01" required
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                value="{{ old('amount', $sinistre->amount ?? '') }}">
+                                <div class="mt-1 relative rounded-md shadow-sm">
+                                    <input type="number" name="amount" id="amount" step="0.01" required readonly
+                                        class="block w-full pr-12 rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm cursor-not-allowed"
+                                        value="{{ old('amount', number_format($sinistre->franchise, 2, '.', '')) }}">
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">MAD</span>
+                                    </div>
+                                </div>
+                                <p class="mt-1 text-sm text-gray-500">Le montant de la franchise est fixe et ne peut pas être modifié.</p>
                             @error('amount')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Cheque Specific Fields -->
-                        <div x-show="paymentMethod === 'cheque'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0">
-                            <div class="space-y-4">
+                            <!-- Cheque specific fields -->
+                            <div x-show="paymentMethod === 'cheque'" class="space-y-6">
                                 <div>
-                                    <label for="cheque_number" class="block text-sm font-medium text-gray-700">Numéro du Chèque</label>
+                                    <label for="cheque_number" class="block text-sm font-medium text-gray-700">Numéro du chèque</label>
                                     <input type="text" name="cheque_number" id="cheque_number"
-                                        x-bind:required="paymentMethod === 'cheque'"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         value="{{ old('cheque_number') }}">
                                 </div>
                                 <div>
-                                    <label for="bank_name" class="block text-sm font-medium text-gray-700">Nom de la Banque</label>
+                                    <label for="bank_name" class="block text-sm font-medium text-gray-700">Nom de la banque</label>
                                     <input type="text" name="bank_name" id="bank_name"
-                                        x-bind:required="paymentMethod === 'cheque'"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         value="{{ old('bank_name') }}">
-                                </div>
                             </div>
                         </div>
 
-                        <!-- Virement Specific Fields -->
-                        <div x-show="paymentMethod === 'virement'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0">
-                            <div class="space-y-4">
+                            <!-- Virement specific fields -->
+                            <div x-show="paymentMethod === 'virement'" class="space-y-6">
                                 <div>
-                                    <label for="transaction_id" class="block text-sm font-medium text-gray-700">Référence du Virement</label>
+                                    <label for="transaction_id" class="block text-sm font-medium text-gray-700">ID de transaction</label>
                                     <input type="text" name="transaction_id" id="transaction_id"
-                                        x-bind:required="paymentMethod === 'virement'"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         value="{{ old('transaction_id') }}">
                                 </div>
                                 <div>
-                                    <label for="bank_name_virement" class="block text-sm font-medium text-gray-700">Banque Émettrice</label>
+                                    <label for="bank_name_virement" class="block text-sm font-medium text-gray-700">Nom de la banque</label>
                                     <input type="text" name="bank_name_virement" id="bank_name_virement"
-                                        x-bind:required="paymentMethod === 'virement'"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         value="{{ old('bank_name_virement') }}">
-                                </div>
                             </div>
                         </div>
 
-                        <!-- Espèces Specific Fields -->
-                        <div x-show="paymentMethod === 'especes'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0">
-                            <div class="space-y-4">
+                            <!-- Especes specific field -->
+                            <div x-show="paymentMethod === 'especes'" class="space-y-6">
                                 <div>
-                                    <label for="receipt_number" class="block text-sm font-medium text-gray-700">Numéro du reçu</label>
+                                    <label for="receipt_number" class="block text-sm font-medium text-gray-700">Numéro de reçu</label>
                                     <input type="text" name="receipt_number" id="receipt_number"
-                                        x-bind:required="paymentMethod === 'especes'"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         value="{{ old('receipt_number') }}">
                                 </div>
                             </div>
                         </div>
 
-                        <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Soumettre le paiement
+                        <div class="flex justify-end">
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-[#00008f] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#000066] focus:bg-[#000066] active:bg-[#000066] focus:outline-none focus:ring-2 focus:ring-[#00008f] focus:ring-offset-2 transition ease-in-out duration-150">
+                                Confirmer le paiement
                         </button>
+                        </div>
                     </form>
                 </div>
             </div>

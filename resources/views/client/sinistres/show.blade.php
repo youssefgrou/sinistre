@@ -189,7 +189,20 @@
             <!-- Payment History -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
                 <div class="p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Historique des paiements</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Historique des paiements</h3>
+                        
+                        @if($sinistre->indemnisation === null)
+                            <button disabled class="inline-flex items-center px-4 py-2 bg-gray-300 text-gray-600 rounded-md font-semibold text-xs uppercase tracking-widest cursor-not-allowed">
+                                Paiement indisponible
+                            </button>
+                            <p class="text-sm text-gray-500 mt-2">Le paiement sera disponible après le calcul de l'indemnisation par l'administrateur.</p>
+                        @else
+                            <a href="{{ route('client.payment.create', $sinistre) }}" class="inline-flex items-center px-4 py-2 bg-[#00008f] border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-[#000066] focus:bg-[#000066] active:bg-[#000066] focus:outline-none focus:ring-2 focus:ring-[#00008f] focus:ring-offset-2 transition ease-in-out duration-150">
+                                Effectuer un paiement
+                            </a>
+                        @endif
+                    </div>
                     
                     @if($sinistre->payments->isEmpty())
                         <p class="text-sm text-gray-500">Aucun paiement n'a été effectué pour le moment.</p>
